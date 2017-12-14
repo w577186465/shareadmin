@@ -36,18 +36,19 @@ export default {
   },
   computed: {
   },
+  created: function () {
+  },
   methods: {
     login: function () {
       this.result = '正在登录'
       this.topPopup = true
-      axios.post('http://localhost:8000/oauth/token', {
+      var url = process.env.API_HOME + 'oauth/token'
+      axios.post(url, {
         grant_type: 'password',
-        client_secret: 'hixFzkhdShHnLlQdnxwtTyiIj0S6sRvXuJkGkMYP',
+        client_secret: 'fnfFeRT4MXhBfrIGgu4A2tHWSxNMbRJvEfxvbOTc',
         client_id: '2',
-        // username: this.form.email,
-        // password: this.form.password
-        username: 'passwoo@163.com',
-        password: '123456'
+        username: this.form.email,
+        password: this.form.password
       })
       .then(res => {
         // console.log(res.data)

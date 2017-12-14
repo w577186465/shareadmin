@@ -1,2 +1,6 @@
 export const LOGIN = 'LOGIN'
 export const LOGOUT = 'LOGOUT'
+export const MESSAGE = 'MESSAGE'
+export const MESSAGE_CLOSE = 'MESSAGE_CLOSE'
+export const LOADING = 'LOADING'
+export const LOADINGOUT = 'LOADINGOUT'

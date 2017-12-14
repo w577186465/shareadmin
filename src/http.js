@@ -5,6 +5,7 @@ import router from './router'
 // http request 拦截器
 axios.interceptors.request.use(
   config => {
+    store.dispatch('loading')
     if (store.state.auth.token) { // 判断是否存在token，如果存在的话，则每个http header都加上token
       config.headers.Authorization = `Bearer ${store.state.auth.token}`
     }

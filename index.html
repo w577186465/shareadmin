@@ -2,47 +2,63 @@
 <html>
   <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     <title>股票系统后台</title>
-    <link rel="stylesheet" href="/static/css/materialfonts.css">
+    <!-- <link rel="stylesheet" href="/static/css/materialfonts.css"> -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
   </head>
   <body>
+    
     <script type="text/javascript">
-      ;(function(win, lib) {
-      var doc = win.document;
-      var docEl = doc.documentElement;
-      var metaEl = doc.querySelector('meta[name="viewport"]');
-      var flexibleEl = doc.querySelector('meta[name="flexible"]');
-      var dpr = 0;
-      var scale = 0;
-      var tid;
-      var flexible = lib.flexible || (lib.flexible = {});
-      
-      if (metaEl) {
-          console.warn('将根据已有的meta标签来设置缩放比例');
-          var match = metaEl.getAttribute('content').match(/initial\-scale=([\d\.]+)/);
-          if (match) {
-              scale = parseFloat(match[1]);
-              dpr = parseInt(1 / scale);
-          }
-      } else if (flexibleEl) {
-          var content = flexibleEl.getAttribute('content');
-          if (content) {
-              var initialDpr = content.match(/initial\-dpr=([\d\.]+)/);
-              var maximumDpr = content.match(/maximum\-dpr=([\d\.]+)/);
-              if (initialDpr) {
-                  dpr = parseFloat(initialDpr[1]);
-                  scale = parseFloat((1 / dpr).toFixed(2));    
-              }
-              if (maximumDpr) {
-                  dpr = parseFloat(maximumDpr[1]);
-                  scale = parseFloat((1 / dpr).toFixed(2));    
-              }
-          }
-      }
+      //designWidth:设计稿的实际宽度值，需要根据实际设置
+      //maxWidth:制作稿的最大宽度值，需要根据实际设置
+      //这段js的最后面有两个参数记得要设置，一个为设计稿实际宽度，一个为制作稿最大宽度，例如设计稿为750，最大宽度为750，则为(750,750)
+      ;(function(designWidth, maxWidth) {
+        var doc = document,
+        win = window,
+        docEl = doc.documentElement,
+        remStyle = document.createElement("style"),
+        tid;
 
-      if (!dpr && !scale) {
-          var isAndroid = win.navigator.appVersion.match(/android/gi);
+        function refreshRem() {
+          var width = docEl.getBoundingClientRect().width;
+          maxWidth = maxWidth || 540;
+          width>maxWidth && (width=maxWidth);
+          var rem = width * 100 / designWidth;
+          remStyle.innerHTML = 'html{font-size:' + rem + 'px;}';
+        }
+
+        if (docEl.firstElementChild) {
+          docEl.firstElementChild.appendChild(remStyle);
+        } else {
+          var wrap = doc.createElement("div");
+          wrap.appendChild(remStyle);
+          doc.write(wrap.innerHTML);
+          wrap = null;
+        }
+        //要等 wiewport 设置好后才能执行 refreshRem，不然 refreshRem 会执行2次；
+        refreshRem();
+
+        win.addEventListener("resize", function() {
+          clearTimeout(tid); //防止执行两次
+          tid = setTimeout(refreshRem, 300);
+        }, false);
+
+        win.addEventListener("pageshow", function(e) {
+          if (e.persisted) { // 浏览器后退的时候重新计算
+            clearTimeout(tid);
+            tid = setTimeout(refreshRem, 300);
+          }
+        }, false);
+
+        if (doc.readyState === "complete") {
+          doc.body.style.fontSize = "16px";
+        } else {
+          doc.addEventListener("DOMContentLoaded", function(e) {
+            doc.body.style.fontSize = "16px";
+          }, false);
+        }
+      })(750, 750);
     </script>
     <div id="app"></div>
     <!-- built files will be auto injected -->
